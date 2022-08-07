@@ -1,5 +1,6 @@
 import React from 'react';
+import { Pomodoro } from './components/pomodoro';
 
 export default function App() {
-  return <div className="App">Hello World</div>;
+  return <Pomodoro />;
 }
