@@ -2,11 +2,14 @@ import React, { useCallback, useState } from 'react';
 import play from '../assets/play.png';
 import { Timer } from './Timer';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const sound = new Audio(require('../sounds/bell-sound.mp3'));
+
 export function Pomodoro() {
-  const [mode, setMode] = useState(['Work', 'Short Break', 'Long Break']);
   const [count, setCount] = useState(0);
-  const [option, setOption] = useState(mode[count]);
   const [working, setWorking] = useState(false);
+  const [paused, setPaused] = useState(true);
+  const [start, setStart] = useState(true);
 
   const handleToggleValue = useCallback(() => {
     if (count >= 2) setCount(0);
@@ -14,36 +17,65 @@ export function Pomodoro() {
   }, [count, setCount]);
 
   const handlePlay = useCallback(() => {
-    if (!working) {
-      setOption(mode[count]);
-      setCount(0);
+    if (start) setStart(false);
+    if (!working && paused) {
+      document.body.classList.add('work');
+      sound.play();
+      setPaused(false);
+    } else {
+      document.body.classList.remove('work');
+      setPaused(true);
     }
     setWorking(!working);
-  }, [mode, count, setCount, setOption, working, setWorking]);
+  }, [
+    count,
+    setCount,
+    working,
+    setWorking,
+    paused,
+    setPaused,
+    start,
+    setStart,
+  ]);
+
+  const handleReset = useCallback(() => {
+    if (!start) setStart(true);
+    setPaused(true);
+    setWorking(false);
+  }, [
+    count,
+    setCount,
+    working,
+    setWorking,
+    paused,
+    setPaused,
+    start,
+    setStart,
+  ]);
 
   return (
     <div className="container">
       <h1>Pomodoro</h1>
       <div className="pomodoro">
-        {!working ? (
+        {start ? (
           <>
             <img src={play} onClick={() => handlePlay()} />
             <button
               title="Clique-me para trocar o modo"
               onClick={() => handleToggleValue()}
             >
-              {mode[count]} ⬇
+              ⬇ Work ⬇
             </button>
           </>
         ) : (
-          <Timer timeMode={option as 'Work' | 'Short Break' | 'Long Break'} />
+          <Timer isPaused={paused} restart={start} sound={sound} />
         )}
       </div>
       <div className="buttonGroup">
         <button onClick={() => handlePlay()}>
           {!working ? 'Resume' : 'Pause'}
         </button>
-        <button>Reset</button>
+        <button onClick={() => handleReset()}>Reset</button>
       </div>
     </div>
   );

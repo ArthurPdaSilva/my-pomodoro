@@ -8,6 +8,12 @@
 body {
   background-color: #F51013;
   font-family: 'Poppins', sans-serif;
+  transition: background-color 300ms ease-in-out;
+}
+
+.work {
+  display: hidden;
+  background-color: #43aa8b;
 }
 
 button {
@@ -40,6 +46,11 @@ button {
   background: #F51013;
   border: 19px solid #FFFFFF;
   border-radius: 50%;
+}
+
+.work .pomodoro {
+  background-color: #43aa8b;
+  transition: background-color 300ms ease-in-out;
 }
 
 .pomodoro img {
@@ -80,4 +91,9 @@ button {
   text-align: center;
   color: #F51013;
   border-radius: 20px;
+}
+
+.work .buttonGroup button {
+  color: #43aa8b;
+  transition: background-color 300ms ease-in-out;
 }
