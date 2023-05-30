@@ -11,47 +11,38 @@ export function Pomodoro() {
   const [paused, setPaused] = useState(true);
   const [start, setStart] = useState(true);
 
+  const handlePlay = useCallback(() => {
+    if (start) setStart(false);
+    if (isWorking()) workingTime();
+    else pausedTime();
+    setWorking(!working);
+  }, [start, working, setWorking, setStart]);
+
+  const isWorking = useCallback(() => {
+    return !working && paused;
+  }, [working, paused]);
+
+  const workingTime = useCallback(() => {
+    document.body.classList.add('work');
+    sound.play();
+    setPaused(false);
+  }, [setPaused]);
+
+  const pausedTime = useCallback(() => {
+    document.body.classList.remove('work');
+    setPaused(true);
+  }, [setPaused]);
+
   const handleToggleValue = useCallback(() => {
     if (count >= 2) setCount(0);
     else setCount(count + 1);
   }, [count, setCount]);
 
-  const handlePlay = useCallback(() => {
-    if (start) setStart(false);
-    if (!working && paused) {
-      document.body.classList.add('work');
-      sound.play();
-      setPaused(false);
-    } else {
-      document.body.classList.remove('work');
-      setPaused(true);
-    }
-    setWorking(!working);
-  }, [
-    count,
-    setCount,
-    working,
-    setWorking,
-    paused,
-    setPaused,
-    start,
-    setStart,
-  ]);
-
   const handleReset = useCallback(() => {
     if (!start) setStart(true);
     setPaused(true);
     setWorking(false);
-  }, [
-    count,
-    setCount,
-    working,
-    setWorking,
-    paused,
-    setPaused,
-    start,
-    setStart,
-  ]);
+  }, [start, setWorking, setPaused, setStart]);
 
   return (
     <div className="container">

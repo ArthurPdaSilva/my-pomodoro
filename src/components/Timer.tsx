@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useInterval } from '../hooks/intertaval';
-import { FormattedTime } from '../utils/format-time';
+import { FormattedTime } from '../utils/TimeFormat';
 
 type PropsProtocol = {
   isPaused: boolean;
@@ -16,22 +16,20 @@ export function Timer(props: PropsProtocol) {
   useEffect(() => {
     if (props.restart) setTime(1500);
     else if (time > 0) return;
-    else if (time === 0 && rest) {
-      setTime(1500);
-      setRest(false);
+    else if (time === 0 && rest) startCounting(1500, -1, false);
+    else if (time <= 0 && cycle < 3) startCounting(300, cycle + 1);
+    else startCounting(600, 0);
+  }, [time, rest]);
+
+  const startCounting = useCallback(
+    (count: number, cyclesCount: number, restValue = true) => {
+      setTime(count);
+      if (cyclesCount !== -1) setCycle(cyclesCount);
+      setRest(restValue);
       props.sound.play();
-    } else if (time <= 0 && cycle < 3) {
-      setTime(300);
-      setCycle(cycle + 1);
-      setRest(true);
-      props.sound.play();
-    } else {
-      setTime(900);
-      setCycle(0);
-      setRest(true);
-      props.sound.play();
-    }
-  }, [time, setTime, setRest, rest]);
+    },
+    [setTime, setCycle, setRest],
+  );
 
   useInterval(
     () => {
